@@ -1,4 +1,4 @@
-import { getMoistureStatus, batteryHealth, estimatedBatteryDays, batteryTrendPerDay, activeTimePerHour, connectionTimeSeconds } from '../utils/calculations';
+import { getMoistureStatus, soilPercent, batteryHealth, estimatedBatteryDays, batteryTrendPerDay, activeTimePerHour, connectionTimeSeconds } from '../utils/calculations';
 
 export default function MetricsGrid({ latest }) {
   const moistureStatus = getMoistureStatus(latest.soil_raw);
@@ -26,7 +26,7 @@ export default function MetricsGrid({ latest }) {
           <div 
             className="bar-fill moisture"
             style={{
-              width: `${Math.min(100, Math.max(0, ((latest.soil_raw - 35000) / (47000 - 35000)) * 100))}%`,
+              width: `${soilPercent(latest.soil_raw)}%`,
               backgroundColor: moistureStatus.color
             }}
           ></div>

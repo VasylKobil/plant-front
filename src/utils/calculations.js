@@ -1,20 +1,88 @@
-const SOIL_DRY = 47000;
-const SOIL_WET = 500;
-const SOIL_NORMAL_MIN = 25000;
+const SOIL = {
+  wet: 500,
+  optimalLow: 12000,
+  optimalHigh: 28000,
+  dry: 47000,
+};
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function normalize(raw) {
+  return clamp(
+    ((raw - SOIL.wet) / (SOIL.dry - SOIL.wet)) * 100,
+    0,
+    100
+  );
+}
 
 export function getMoistureStatus(raw) {
-  if (raw >= SOIL_DRY) {
-    return { status: 'dry', label: 'Dry', emoji: '🟢', color: '#d4d158' };
-  } else if (raw >= SOIL_NORMAL_MIN) {
-    return { status: 'normal', label: 'Normal', emoji: '🟡', color: '#3fb950' };
-  } else {
-    return { status: 'wet', label: 'Wet', emoji: '🔵', color: '#58a6ff' };
+  if (
+    raw == null ||
+    Number.isNaN(raw) ||
+    !Number.isFinite(raw)
+  ) {
+    return {
+      status: 'unknown',
+      label: 'No data',
+      emoji: '⚪',
+      color: '#8b949e',
+      percent: null,
+    };
   }
+
+  const percent = normalize(raw);
+
+  let result;
+
+  if (raw >= SOIL.dry) {
+    result = {
+      status: 'critical-dry',
+      label: 'Very Dry',
+      emoji: '🔴',
+      color: '#f85149',
+    };
+  } else if (raw >= SOIL.optimalHigh) {
+    result = {
+      status: 'dry',
+      label: 'Dry',
+      emoji: '🟠',
+      color: '#d29922',
+    };
+  } else if (raw >= SOIL.optimalLow) {
+    result = {
+      status: 'optimal',
+      label: 'Optimal',
+      emoji: '🟢',
+      color: '#3fb950',
+    };
+  } else if (raw >= SOIL.wet) {
+    result = {
+      status: 'wet',
+      label: 'Wet',
+      emoji: '🔵',
+      color: '#58a6ff',
+    };
+  } else {
+    result = {
+      status: 'saturated',
+      label: 'Too Wet',
+      emoji: '🟣',
+      color: '#a371f7',
+    };
+  }
+
+  return {
+    raw,
+    percent: Math.round(percent),
+    ...result,
+  };
 }
 
 export function soilPercent(raw) {
   // For visual progress bar (0-100%)
-  const p = ((SOIL_DRY - raw) / (SOIL_DRY - SOIL_WET)) * 100;
+  const p = ((SOIL.dry - raw) / (SOIL.dry - SOIL.wet)) * 100;
   return Math.max(0, Math.min(100, Math.round(p)));
 }
 
@@ -114,12 +182,7 @@ export function getPlantHealth(latest) {
 }
 
 export function getNextWakeTime(latest) {
-  // Calculate next wake time based on sleep_minutes
-  const now = new Date();
-  const nextWake = new Date(now.getTime() + latest.sleep_minutes * 60000);
-  
-  return nextWake.toLocaleTimeString([], { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
+  const date = new Date(latest.created_at);
+  date.setHours(date.getHours() + latest.sleep_minutes / 60);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
