@@ -1,6 +1,11 @@
-import { soilPercent, batteryStatus } from '../utils/calculations';
+import { getMoistureStatus, batteryHealth, estimatedBatteryDays, batteryTrendPerDay, activeTimePerHour, connectionTimeSeconds } from '../utils/calculations';
 
 export default function MetricsGrid({ latest }) {
+  const moistureStatus = getMoistureStatus(latest.soil_raw);
+  const batteryDays = estimatedBatteryDays(latest);
+  const awakeTime = activeTimePerHour(latest);
+  const connTime = connectionTimeSeconds(latest);
+  
   return (
     <div className="grid">
       <div className="metric-card">
@@ -14,35 +19,63 @@ export default function MetricsGrid({ latest }) {
       <div className="metric-card">
         <div className="metric-icon">💧</div>
         <div className="metric-label">Soil Moisture</div>
-        <div className="metric-value">
-          {soilPercent(latest.soil_raw)}%
+        <div className="metric-status">
+          {moistureStatus.emoji} {moistureStatus.label}
         </div>
         <div className="metric-bar">
           <div 
             className="bar-fill moisture"
             style={{
-              width: `${soilPercent(latest.soil_raw)}%`
+              width: `${Math.min(100, Math.max(0, ((latest.soil_raw - 35000) / (47000 - 35000)) * 100))}%`,
+              backgroundColor: moistureStatus.color
             }}
           ></div>
         </div>
+        <div className="metric-detail">{latest.soil_raw}</div>
       </div>
 
       <div className="metric-card">
         <div className="metric-icon">🔋</div>
-        <div className="metric-label">Battery</div>
-        <div className="metric-value">
-          {latest.battery_idle.toFixed(2)}V
+        <div className="metric-label">Battery Health</div>
+        <div className="metric-status">
+          {batteryHealth(latest)}
         </div>
-        <div className={`status-badge ${batteryStatus(latest).toLowerCase()}`}>
-          {batteryStatus(latest)}
+        <div className="metric-detail">
+          {latest.battery_idle.toFixed(2)}V ({(latest.battery_idle / 4.2 * 100).toFixed(0)}%)
+        </div>
+        <div className="metric-detail-small">
+          ~{batteryDays}d remaining
+        </div>
+      </div>
+
+      <div className="metric-card">
+        <div className="metric-icon">⏰</div>
+        <div className="metric-label">Active Time</div>
+        <div className="metric-status">
+          {awakeTime.seconds}s / hour
+        </div>
+        <div className="metric-detail-small">
+          {awakeTime.percent}%
         </div>
       </div>
 
       <div className="metric-card">
         <div className="metric-icon">📡</div>
-        <div className="metric-label">WiFi Signal</div>
+        <div className="metric-label">Connection Time</div>
         <div className="metric-value">
-          {latest.wifi_ms}ms
+          {connTime}s
+        </div>
+        <div className="metric-detail">Wake → Upload</div>
+      </div>
+
+      <div className="metric-card">
+        <div className="metric-icon">📉</div>
+        <div className="metric-label">Discharge Rate</div>
+        <div className="metric-detail">
+          {batteryTrendPerDay(latest)} V/day
+        </div>
+        <div className="metric-detail-small">
+          Drop per cycle: {(latest.battery_idle - latest.battery_load).toFixed(3)}V
         </div>
       </div>
     </div>

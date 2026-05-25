@@ -1,4 +1,4 @@
-import { soilPercent } from '../utils/calculations';
+import { getMoistureStatus } from '../utils/calculations';
 
 export default function HistoryTable({ history }) {
   return (
@@ -8,36 +8,42 @@ export default function HistoryTable({ history }) {
       <div className="history-table">
         <div className="history-header">
           <span>Time</span>
-          <span>Temperature</span>
-          <span>Moisture</span>
-          <span>Battery</span>
+          <span>🌡️ Temp</span>
+          <span>💧 Moisture</span>
+          <span>🔋 Battery</span>
         </div>
 
         {
           history
             .slice(0, 10)
-            .map((item) => (
-              <div
-                key={item.id}
-                className="history-row"
-              >
-                <span className="time">
-                  {new Date(item.created_at).toLocaleTimeString()}
-                </span>
+            .map((item) => {
+              const moistureStatus = getMoistureStatus(item.soil_raw);
+              const batteryPercent = (item.battery_idle / 4.2 * 100).toFixed(0);
+              const batteryColor = item.battery_idle < 3.7 ? 'low' : item.battery_idle < 3.4 ? 'critical' : 'good';
+              
+              return (
+                <div
+                  key={item.id}
+                  className="history-row"
+                >
+                  <span className="time">
+                    {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
 
-                <span className="temp">
-                  {item.temperature}°C
-                </span>
+                  <span className="temp">
+                    {item.temperature}°C
+                  </span>
 
-                <span className="moisture">
-                  {soilPercent(item.soil_raw)}%
-                </span>
+                  <span className="moisture">
+                    {moistureStatus.emoji} {moistureStatus.label}
+                  </span>
 
-                <span className={`battery ${item.battery_idle < 3.7 ? 'low' : 'good'}`}>
-                  {item.battery_idle.toFixed(2)}V
-                </span>
-              </div>
-            ))
+                  <span className={`battery ${batteryColor}`}>
+                    {item.battery_idle.toFixed(2)}V ({batteryPercent}%)
+                  </span>
+                </div>
+              );
+            })
         }
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { batteryDrop, activePercent } from '../utils/calculations';
+import { batteryDrop, batteryTrendPerDay } from '../utils/calculations';
 
 export default function DetailsGrid({ latest }) {
   return (
@@ -14,13 +14,13 @@ export default function DetailsGrid({ latest }) {
       </div>
 
       <div className="detail">
-        <span className="detail-label">Battery Drop</span>
+        <span className="detail-label">Cycle Drop</span>
         <span className="detail-value">{batteryDrop(latest)}V</span>
       </div>
 
       <div className="detail">
-        <span className="detail-label">Active Time</span>
-        <span className="detail-value">{activePercent(latest)}%</span>
+        <span className="detail-label">Trend</span>
+        <span className="detail-value">{batteryTrendPerDay(latest)}V/day</span>
       </div>
 
       <div className="detail">
