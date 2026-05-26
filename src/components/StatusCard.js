@@ -1,7 +1,7 @@
-import { formatDate } from '../utils/dateTime';
-import StatusHeader from './StatusHeader';
-import MetricsGrid from './MetricsGrid';
-import DetailsGrid from './DetailsGrid';
+import { formatDate } from "../utils/dateTime";
+import StatusHeader from "./StatusHeader";
+import MetricsGrid from "./MetricsGrid";
+import DetailsGrid from "./DetailsGrid";
 
 export default function StatusCard({ latest, onRefresh }) {
   return (
@@ -18,9 +18,7 @@ export default function StatusCard({ latest, onRefresh }) {
 
       <DetailsGrid latest={latest} />
 
-      <button onClick={onRefresh}>
-        🔄 Refresh Now
-      </button>
+      <button onClick={onRefresh}>🔄 Refresh Now</button>
     </div>
   );
 }

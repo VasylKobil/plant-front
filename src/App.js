@@ -1,17 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+
 import "./App.css";
 
 import LoadingScreen from "./components/LoadingScreen";
 import ErrorBanner from "./components/ErrorBanner";
+
 import DayNightContainer from "./components/DayNightContainer";
-import StatusCard from "./components/StatusCard";
+
+import PlantBlock from "./components/PlantBlock";
+import BatteryBlock from "./components/BatteryBlock";
+import DeviceBlock from "./components/DeviceBlock";
+import HistoryBlock from "./components/HistoryBlock";
 import HistoryTable from "./components/HistoryTable";
 
-const API_BASE =
-  "https://plant-server-863h.onrender.com";
+import { getDashboardMetrics } from "./utils/dashboard";
+
+export const API_BASE = "https://plant-server-863h.onrender.com";
 
 function App() {
-
   const [latest, setLatest] = useState(null);
 
   const [history, setHistory] = useState([]);
@@ -20,82 +26,118 @@ function App() {
 
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const metrics = useMemo(
+    () => (latest ? getDashboardMetrics(latest, history) : null),
 
-    fetchData();
+    [latest, history]
+  );
 
-    const interval =
-      setInterval(
-        fetchData,
-        5 * 60 * 1000
-      );
+  const fetchData = useCallback(
+    async (silent = false) => {
+      try {
+        if (!silent && !latest) {
+          setLoading(true);
+        }
 
-    return () =>
-      clearInterval(
-        interval
-      );
+        const [latestRes, historyRes] = await Promise.all([
+          fetch(`${API_BASE}/api/device/balcony/latest`),
 
-  }, []);
+          fetch(`${API_BASE}/api/device/balcony?limit=24`),
+        ]);
 
-  async function fetchData() {
+        if (!latestRes.ok) {
+          throw new Error("Latest request failed");
+        }
 
-    try {
+        if (!historyRes.ok) {
+          throw new Error("History request failed");
+        }
 
-      setLoading(true);
+        const [latestData, historyData] = await Promise.all([
+          latestRes.json(),
 
-      const [latestRes, historyRes] = await Promise.all([
-        fetch(`${API_BASE}/api/device/balcony/latest`),
-        fetch(`${API_BASE}/api/device/balcony?limit=24`)
-      ]);
+          historyRes.json(),
+        ]);
 
-      if (!latestRes.ok || !historyRes.ok) {
-        throw new Error("API Error");
+        setLatest(latestData);
+
+        setHistory(historyData);
+
+        setError(null);
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
       }
+    },
 
-      const latestData = await latestRes.json();
-      const historyData = await historyRes.json();
+    [latest]
+  );
 
-      setLatest(latestData);
-      setHistory(historyData);
-      setError(null);
+  useEffect(() => {
+    let mounted = true;
 
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
+    if (mounted) {
+      fetchData();
     }
 
-  }
+    const id = setInterval(
+      () => {
+        if (mounted) {
+          fetchData(true);
+        }
+      },
+
+      5 * 60 * 1000
+    );
+
+    return () => {
+      mounted = false;
+
+      clearInterval(id);
+    };
+  }, [fetchData]);
 
   if (loading && !latest) {
     return <LoadingScreen />;
   }
 
   return (
-
     <div className="App">
-
       <h1>🌿 Plant Monitor</h1>
 
-      <DayNightContainer />
+      <DayNightContainer history={history} />
 
       <ErrorBanner error={error} />
 
-      {latest && (
+      {latest && metrics && (
         <>
-          <StatusCard 
-            latest={latest} 
-            onRefresh={fetchData}
-          />
+          <div className="dashboard">
+            <PlantBlock latest={latest} history={history} metrics={metrics} />
+
+            <BatteryBlock latest={latest} history={history} />
+
+            <DeviceBlock latest={latest} history={history} />
+
+            <HistoryBlock latest={latest} history={history} />
+          </div>
 
           <HistoryTable history={history} />
         </>
       )}
 
+      <button className="refresh-btn" onClick={() => fetchData()}>
+        🔄 Refresh Now
+      </button>
+
+      <div className="footer">
+        <small>
+          Last updated:{" "}
+          {latest ? new Date(latest.created_at).toLocaleTimeString() : "-"}
+        </small>
+      </div>
     </div>
-
   );
-
 }
 
 export default App;

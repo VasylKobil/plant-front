@@ -1,4 +1,4 @@
-import { batteryDrop, batteryTrendPerDay } from '../utils/calculations';
+import { batteryDrop, batteryTrendPerDay } from "../utils/calculations";
 
 export default function DetailsGrid({ latest }) {
   return (
