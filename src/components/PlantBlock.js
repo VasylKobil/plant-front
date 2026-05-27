@@ -38,10 +38,6 @@ export default function PlantBlock({ metrics, latest, history }) {
     trend: dryRate > 0 ? "↓" : "→",
 
     emoji: dryRate > 300 ? "☀️" : "💧",
-
-    soilDelta: Math.abs(dryRate),
-
-    hours: 24,
   };
 
   const evapCoef = {
@@ -90,10 +86,6 @@ export default function PlantBlock({ metrics, latest, history }) {
 
           <div className="metric-main">
             {drySpeed.trend} {Math.abs(drySpeed.rate)} {drySpeed.unit}
-          </div>
-
-          <div className="metric-detail">
-            {drySpeed.soilDelta} raw за {drySpeed.hours}h
           </div>
         </div>
 

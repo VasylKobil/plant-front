@@ -1,8 +1,9 @@
 export const SOIL = {
-  wet: 500,
+  wet: 1000,
   optimalLow: 12000,
   optimalHigh: 28000,
-  dry: 47000,
+  warning: 26000,
+  dry: 46000,
 };
 
 export const BATTERY = {

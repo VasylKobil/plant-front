@@ -87,11 +87,15 @@ export function getMoistureDryingSpeed(history) {
 }
 
 export function getWaterLeftForecast(latest, history) {
-  const speed = getMoistureDryingSpeed(history);
+  const drying = getMoistureDryingSpeed(history);
 
-  if (speed <= 0) {
+  if (!drying || drying <= 0) {
     return null;
   }
 
-  return Number(((SOIL.dry - latest.soil_raw) / speed).toFixed(1));
+  const remaining = SOIL.warning - latest.soil_raw;
+
+  const days = remaining / drying;
+
+  return Math.max(0, Number(days.toFixed(1)));
 }

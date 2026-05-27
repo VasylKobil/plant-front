@@ -33,20 +33,28 @@ export function batteryHealth(latest) {
 }
 
 export function batteryTrendPerDay(history) {
-  if (!history || history.length < 2) {
-    return null;
+  if (!history || history.length < 6) {
+    return 0;
   }
 
-  const oldest = history[history.length - 1];
+  const sample = history.slice(0, 12);
 
-  const newest = history[0];
+  const newest = sample[0];
+
+  const oldest = sample[sample.length - 1];
 
   const delta = oldest.battery_idle - newest.battery_idle;
 
   const hours =
     (new Date(newest.created_at) - new Date(oldest.created_at)) / 3600000;
 
-  return Number(((delta / hours) * 24).toFixed(3));
+  if (hours <= 0) {
+    return 0;
+  }
+
+  const perDay = (delta / hours) * 24;
+
+  return Number(Math.max(0, perDay).toFixed(3));
 }
 
 export function estimatedBatteryDays(latest, history) {
@@ -101,4 +109,25 @@ export function batteryPercent(voltage) {
   const ratio = (voltage - LOW) / (FULL - LOW);
 
   return Math.round(40 + ratio * 60);
+}
+
+export function getEnergyScore(latest) {
+  const awake = latest.cycle_ms / 1000;
+
+  const sleep = latest.sleep_minutes * 60;
+
+  const efficiency = (sleep / (sleep + awake)) * 100;
+
+  return {
+    efficiency: Math.round(efficiency),
+
+    status:
+      efficiency > 99
+        ? "Excellent"
+        : efficiency > 97
+          ? "Good"
+          : efficiency > 95
+            ? "Average"
+            : "Poor",
+  };
 }

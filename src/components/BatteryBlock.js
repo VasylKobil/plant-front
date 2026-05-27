@@ -1,10 +1,10 @@
 import {
   batteryDrop,
-  batteryHealth,
   batteryTrendPerDay,
   estimatedBatteryDays,
   getBatteryStress,
   batteryPercent,
+  getEnergyScore,
 } from "../utils/battery";
 import { BATTERY } from "../utils/constants";
 
@@ -19,22 +19,18 @@ export default function BatteryBlock({ latest, history }) {
 
   const stress = getBatteryStress(latest);
 
-  const health = batteryHealth(latest);
-
   const drop = batteryDrop(latest);
 
-  const energyScore = Math.round(
-    (100 - latest.wifi_ms / 200) * 0.5 + (100 - drop * 500) * 0.5
-  );
+  const energyScore = getEnergyScore(latest);
 
   const batteryPercentValue = batteryPercent(latest.battery_idle);
 
   const dischargeData = {
     emoji: discharge > 0.08 ? "🔴" : discharge > 0.04 ? "🟡" : "🟢",
 
-    rate: discharge ?? 0,
+    rate: Math.round(discharge * 1000) ?? 0,
 
-    unit: "V/day",
+    unit: "mV/day",
   };
 
   const runtimeData = {
@@ -52,9 +48,9 @@ export default function BatteryBlock({ latest, history }) {
         ? "🟡"
         : "🔴",
 
-    drop: drop,
+    drop: Math.round(drop * 1000),
 
-    unit: "V",
+    unit: "mV/day",
 
     status: stress,
   };
@@ -92,7 +88,7 @@ export default function BatteryBlock({ latest, history }) {
           </div>
 
           <div className="metric-main">
-            {Math.abs(dischargeData.rate)} {dischargeData.unit}
+            {dischargeData.rate} {dischargeData.unit}
           </div>
 
           <div className="metric-detail">Battery loss per day</div>
@@ -118,8 +114,7 @@ export default function BatteryBlock({ latest, history }) {
           </div>
 
           <div className="metric-main">
-            Load drop {stressData.drop}
-            {stressData.unit}
+            Load drop {stressData.drop} {stressData.unit}
           </div>
 
           <div className="metric-detail">{stressData.status}</div>
@@ -132,9 +127,9 @@ export default function BatteryBlock({ latest, history }) {
             <span className="metric-title">Efficiency</span>
           </div>
 
-          <div className="metric-main">{energyScore}%</div>
+          <div className="metric-main">{energyScore.efficiency}%</div>
 
-          <div className="metric-detail">{health}</div>
+          <div className="metric-detail">{energyScore.status}</div>
         </div>
       </div>
     </div>
