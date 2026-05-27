@@ -536,7 +536,7 @@ button:active {
 }
 
 .bar-container.score {
-  background: linear-gradient(90deg,#3fb950, #58a6ff);
+  background: linear-gradient(90deg, #3fb950, #58a6ff);
 }
 
 .bar-fill {
