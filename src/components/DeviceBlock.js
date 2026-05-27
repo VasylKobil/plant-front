@@ -87,7 +87,7 @@ export default function DeviceBlock({ latest, history }) {
 
   return (
     <div className="block device-block">
-      <h2>📡 Пристрій</h2>
+      <h2>📡 Device</h2>
 
       <div className="metrics-row">
         <div className="metric-card">

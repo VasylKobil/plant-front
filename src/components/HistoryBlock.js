@@ -53,7 +53,7 @@ export default function HistoryBlock({ latest, history }) {
 
   return (
     <div className="block history-block">
-      <h2>📈 Історія</h2>
+      <h2>📈 History</h2>
 
       <button className="fetch-history-btn" onClick={fetchData}>
         {loading ? "Fetching..." : "Fetch all History"}

@@ -57,7 +57,7 @@ export default function PlantBlock({ metrics, latest, history }) {
 
   return (
     <div className="block plant-block">
-      <h2>🌱 Рослина</h2>
+      <h2>🌱 Plant</h2>
 
       <div className="moisture-bar-full">
         <div className="bar-label">

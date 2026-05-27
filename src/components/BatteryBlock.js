@@ -4,7 +4,9 @@ import {
   batteryTrendPerDay,
   estimatedBatteryDays,
   getBatteryStress,
+  batteryPercent,
 } from "../utils/battery";
+import { BATTERY } from "../utils/constants";
 
 export default function BatteryBlock({ latest, history }) {
   if (!latest) {
@@ -25,15 +27,7 @@ export default function BatteryBlock({ latest, history }) {
     (100 - latest.wifi_ms / 200) * 0.5 + (100 - drop * 500) * 0.5
   );
 
-  const batteryPercent = Math.max(
-    0,
-
-    Math.min(
-      100,
-
-      Math.round(((latest.battery_idle - 3.4) / 0.8) * 100)
-    )
-  );
+  const batteryPercentValue = batteryPercent(latest.battery_idle);
 
   const dischargeData = {
     emoji: discharge > 0.08 ? "🔴" : discharge > 0.04 ? "🟡" : "🟢",
@@ -67,7 +61,7 @@ export default function BatteryBlock({ latest, history }) {
 
   return (
     <div className="block battery-block">
-      <h2>🔋 Батарея</h2>
+      <h2>🔋 Battery</h2>
 
       <div className="battery-bar-full">
         <div className="bar-label">
@@ -78,13 +72,14 @@ export default function BatteryBlock({ latest, history }) {
           <div
             className="bar-fill battery"
             style={{
-              width: `${batteryPercent}%`,
+              width: `${batteryPercentValue}%`,
             }}
           />
         </div>
 
         <div className="bar-value">
-          {batteryPercent}% •{(latest.battery_idle - 3.4).toFixed(2)}V usable
+          {batteryPercentValue}% •{" "}
+          {(latest.battery_idle - BATTERY.cutoff).toFixed(2)}V usable
         </div>
       </div>
 

@@ -1,4 +1,6 @@
 import { getMoistureStatus } from "../utils/soil";
+import { batteryPercent } from "../utils/battery";
+import { BATTERY } from "../utils/constants";
 
 export default function HistoryTable({ history }) {
   return (
@@ -15,11 +17,11 @@ export default function HistoryTable({ history }) {
 
         {history.map((item) => {
           const moistureStatus = getMoistureStatus(item.soil_raw);
-          const batteryPercent = ((item.battery_idle / 4.2) * 100).toFixed(0);
+          const batteryPercentValue = batteryPercent(item.battery_idle);
           const batteryColor =
-            item.battery_idle < 3.7
+            item.battery_idle < BATTERY.low
               ? "low"
-              : item.battery_idle < 3.4
+              : item.battery_idle < BATTERY.critical
                 ? "critical"
                 : "good";
 
@@ -39,7 +41,7 @@ export default function HistoryTable({ history }) {
               </span>
 
               <span className={`battery ${batteryColor}`}>
-                {item.battery_idle.toFixed(2)}V ({batteryPercent}%)
+                {item.battery_idle.toFixed(2)}V ({batteryPercentValue}%)
               </span>
             </div>
           );

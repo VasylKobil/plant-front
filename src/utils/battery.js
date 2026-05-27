@@ -72,3 +72,33 @@ export function getBatteryStress(latest) {
 
   return "🟢 Excellent";
 }
+
+export function batteryPercent(voltage) {
+  const FULL = BATTERY.full;
+
+  const LOW = BATTERY.low;
+
+  const EMPTY = BATTERY.cutoff;
+
+  if (voltage <= EMPTY) {
+    return 0;
+  }
+
+  if (voltage >= FULL) {
+    return 100;
+  }
+
+  // 3.4–3.7V
+  // нижня зона швидше падає
+  if (voltage < LOW) {
+    const ratio = (voltage - EMPTY) / (LOW - EMPTY);
+
+    return Math.round(ratio * 40);
+  }
+
+  // 3.7–4.2V
+  // верхня зона повільніше
+  const ratio = (voltage - LOW) / (FULL - LOW);
+
+  return Math.round(40 + ratio * 60);
+}
