@@ -64,11 +64,11 @@ export default function BatteryBlock({ latest, history }) {
           Battery: {latest.battery_idle.toFixed(2)}V
         </div>
 
-        <div className="bar-container">
+        <div className="bar-container battery">
           <div
-            className="bar-fill battery"
+            className="bar-fill"
             style={{
-              width: `${batteryPercentValue}%`,
+              width: `${100 - batteryPercentValue}%`,
             }}
           />
         </div>

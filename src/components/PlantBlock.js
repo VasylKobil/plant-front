@@ -64,9 +64,7 @@ export default function PlantBlock({ metrics, latest, history }) {
           <div
             className="bar-fill"
             style={{
-              width: `${moistureStatus.percent}%`,
-
-              backgroundColor: moistureStatus.color,
+              width: `${100 - moistureStatus.percent}%`,
             }}
           />
         </div>

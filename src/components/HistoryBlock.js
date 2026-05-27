@@ -114,11 +114,11 @@ export default function HistoryBlock({ latest, history }) {
       <div className="score-bar-full">
         <div className="bar-label">Environment Health</div>
 
-        <div className="bar-container">
+        <div className="bar-container score">
           <div
-            className="bar-fill score"
+            className="bar-fill"
             style={{
-              width: `${envScore.score}%`,
+              width: `${100 - envScore.score}%`,
             }}
           />
         </div>

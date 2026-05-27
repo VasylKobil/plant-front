@@ -522,29 +522,30 @@ button:active {
 }
 
 .bar-container {
-  background: #0f1115;
+  background: linear-gradient(90deg, #58a6ff, #ffa657);
   height: 12px;
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 8px;
   border: 1px solid #252a35;
+  position: relative;
+}
+
+.bar-container.battery {
+  background: linear-gradient(90deg, #f85149, #ffa657, #58a6ff);
+}
+
+.bar-container.score {
+  background: linear-gradient(90deg,#3fb950, #58a6ff);
 }
 
 .bar-fill {
   height: 100%;
   transition: width 0.3s ease;
-}
-
-.bar-fill.moisture {
-  background: linear-gradient(90deg, #f85149, #ffa657, #3fb950);
-}
-
-.bar-fill.battery {
-  background: linear-gradient(90deg, #f85149, #ffa657, #3fb950, #58a6ff);
-}
-
-.bar-fill.score {
-  background: linear-gradient(90deg, #f85149, #ffa657, #58a6ff, #3fb950);
+  background: #0f1115;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .bar-value {
