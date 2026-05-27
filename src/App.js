@@ -35,7 +35,7 @@ function App() {
   const fetchData = useCallback(
     async (silent = false) => {
       try {
-        if (!silent && !latest) {
+        if (!silent) {
           setLoading(true);
         }
 
@@ -71,7 +71,7 @@ function App() {
       }
     },
 
-    [latest]
+    []
   );
 
   useEffect(() => {

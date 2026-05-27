@@ -1,7 +1,3 @@
-export function formatDate(value) {
-  return new Date(value).toLocaleString();
-}
-
 export function formatTime(date) {
   return date.toLocaleTimeString([], {
     hour: "2-digit",
@@ -82,10 +78,4 @@ export function getSunTimes() {
   }
 
   return { sunrise, sunset };
-}
-
-export function isDayTime() {
-  const now = new Date();
-  const { sunrise, sunset } = getSunTimes();
-  return now >= sunrise && now < sunset;
 }

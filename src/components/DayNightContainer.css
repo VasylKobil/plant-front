@@ -24,46 +24,6 @@
   margin-bottom: 18px;
 }
 
-.sunline {
-  display: flex;
-
-  gap: 14px;
-
-  align-items: center;
-
-  margin-bottom: 20px;
-}
-
-.sun-marker {
-  color: #c7b178;
-
-  font-size: 14px;
-
-  font-weight: 600;
-}
-
-.sun-path {
-  flex: 1;
-
-  height: 30px;
-
-  border-radius: 999px;
-
-  background: linear-gradient(90deg, #1d2540, #394d75, #1d2540);
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  color: #d5def0;
-
-  font-size: 13px;
-
-  font-weight: 600;
-}
-
 .timeline {
   display: flex;
 
@@ -185,30 +145,6 @@
   letter-spacing: 0.4px;
 
   text-align: center;
-}
-
-.timeline-legend {
-  display: flex;
-
-  gap: 10px;
-
-  flex-wrap: wrap;
-
-  margin-top: 18px;
-}
-
-.timeline-legend span {
-  padding: 8px 14px;
-
-  border-radius: 999px;
-
-  background: rgba(255, 255, 255, 0.04);
-
-  color: #c8d2e4;
-
-  font-size: 13px;
-
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @media (max-width: 700px) {

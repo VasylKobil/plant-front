@@ -1,7 +1,6 @@
 import {
   batteryDrop,
   batteryHealth,
-  batteryStatus,
   batteryTrendPerDay,
   estimatedBatteryDays,
   getBatteryStress,
@@ -17,8 +16,6 @@ export default function BatteryBlock({ latest, history }) {
   const runtime = estimatedBatteryDays(latest, history);
 
   const stress = getBatteryStress(latest);
-
-  const status = batteryStatus(latest);
 
   const health = batteryHealth(latest);
 

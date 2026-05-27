@@ -1,13 +1,13 @@
 import "./DayNightContainer.css";
 
-import { getSunTimes, formatTime } from "../utils/dateTime";
+import { getSunTimes } from "../utils/dateTime";
 
 export default function DayNightContainer({ history }) {
   if (!history?.length) {
     return null;
   }
 
-  const { sunrise, sunset } = getSunTimes();
+  getSunTimes();
 
   const data = [...history].reverse();
 

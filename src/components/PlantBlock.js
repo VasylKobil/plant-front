@@ -1,4 +1,4 @@
-import { soilPercent, getMoistureDryingSpeed } from "../utils/soil";
+import { getMoistureDryingSpeed } from "../utils/soil";
 
 import { getTemperatureRange } from "../utils/environment";
 
@@ -7,7 +7,7 @@ export default function PlantBlock({ metrics, latest, history }) {
     return null;
   }
 
-  const { moisture, waterForecast, environment } = metrics;
+  const { moisture, waterForecast } = metrics;
 
   const dryRate = getMoistureDryingSpeed(history);
 
