@@ -106,7 +106,7 @@ function App() {
     <div className="App">
       <h1>🌿 Plant Monitor</h1>
 
-      <DayNightContainer history={history} />
+      <DayNightContainer history={history} metrics={metrics} />
 
       <ErrorBanner error={error} />
 
