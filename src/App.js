@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
 import "./App.css";
 
+import packageJson from "../package.json";
+
 import LoadingScreen from "./components/LoadingScreen";
 import ErrorBanner from "./components/ErrorBanner";
 
@@ -136,7 +138,7 @@ function App() {
       <div className="footer">
         <small>
           Last updated:{" "}
-          {latest ? new Date(latest.created_at).toLocaleTimeString() : "-"}
+          {latest ? new Date(latest.created_at).toLocaleTimeString() : "-"} • v{packageJson.version}
         </small>
       </div>
     </div>
