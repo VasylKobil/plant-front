@@ -86,6 +86,63 @@ export function getMoistureDryingSpeed(history) {
   return Number(((delta / hours) * 24).toFixed(0));
 }
 
+export function getMoistureDryingSpeedByPeriod(history) {
+  if (!history || history.length < 2) {
+    return {
+      "3h": 0,
+      "6h": 0,
+      "12h": 0,
+      "24h": 0,
+      full: 0,
+    };
+  }
+
+  const newest = new Date(history[0].created_at);
+  const periods = {
+    "3h": 3,
+    "6h": 6,
+    "12h": 12,
+    "24h": 24,
+  };
+
+  const results = {};
+
+  for (const [label, hours] of Object.entries(periods)) {
+    const targetTime = new Date(newest.getTime() - hours * 3600000);
+    
+    // Find record closest to targetTime (going back)
+    let bestIdx = history.length - 1;
+    let bestDiff = Infinity;
+    
+    for (let i = 0; i < history.length; i++) {
+      const itemTime = new Date(history[i].created_at);
+      const diff = Math.abs(itemTime - targetTime);
+      
+      if (itemTime <= targetTime && diff < bestDiff) {
+        bestDiff = diff;
+        bestIdx = i;
+      }
+    }
+
+    if (bestIdx !== 0) {
+      const delta = history[0].soil_raw - history[bestIdx].soil_raw;
+      const elapsedHours = (newest - new Date(history[bestIdx].created_at)) / 3600000;
+      
+      if (elapsedHours > 0) {
+        results[label] = Number(((delta / elapsedHours) * 24).toFixed(0));
+      } else {
+        results[label] = 0;
+      }
+    } else {
+      results[label] = 0;
+    }
+  }
+
+  results.full = getMoistureDryingSpeed(history);
+
+  return results;
+}
+
 export function getWaterLeftForecast(latest, history) {
   const drying = getMoistureDryingSpeed(history);
 

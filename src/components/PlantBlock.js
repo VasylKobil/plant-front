@@ -1,4 +1,4 @@
-import { getMoistureDryingSpeed } from "../utils/soil";
+import { getMoistureDryingSpeedByPeriod } from "../utils/soil";
 
 import { getTemperatureRange } from "../utils/environment";
 
@@ -9,7 +9,7 @@ export default function PlantBlock({ metrics, latest, history }) {
 
   const { moisture, waterForecast } = metrics;
 
-  const dryRate = getMoistureDryingSpeed(history);
+  const dryRateByPeriod = getMoistureDryingSpeedByPeriod(history);
 
   const tempRange = getTemperatureRange(history);
 
@@ -31,19 +31,19 @@ export default function PlantBlock({ metrics, latest, history }) {
   };
 
   const drySpeed = {
-    rate: dryRate,
+    rate: dryRateByPeriod.full,
 
     unit: "raw/day",
 
-    trend: dryRate > 0 ? "↓" : "→",
+    trend: dryRateByPeriod.full > 0 ? "↓" : "→",
 
-    emoji: dryRate > 300 ? "☀️" : "💧",
+    emoji: dryRateByPeriod.full > 300 ? "☀️" : "💧",
   };
 
   const evapCoef = {
     coefficient:
       tempRange.delta > 0
-        ? (Math.abs(dryRate) / tempRange.delta).toFixed(0)
+        ? (Math.abs(dryRateByPeriod.full) / tempRange.delta).toFixed(0)
         : 0,
 
     unit: "raw/°",
@@ -83,7 +83,46 @@ export default function PlantBlock({ metrics, latest, history }) {
           </div>
 
           <div className="metric-main">
-            {drySpeed.trend} {Math.abs(drySpeed.rate)} {drySpeed.unit}
+            {drySpeed.trend} {dryRateByPeriod.full > 0 ? "+" : "−"} {Math.abs(drySpeed.rate)} {drySpeed.unit}
+          </div>
+
+          <div className="metric-detail" style={{ fontSize: "0.7rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px", marginTop: "6px" }}>
+            <div style={{ 
+              padding: "4px 6px", 
+              borderRadius: "4px", 
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: dryRateByPeriod["3h"] > 0 ? "#34c759" : "#ff453a",
+            }}>
+              3h: {dryRateByPeriod["3h"] > 0 ? "+" : "−"}{Math.abs(dryRateByPeriod["3h"])}
+            </div>
+            <div style={{ 
+              padding: "4px 6px", 
+              borderRadius: "4px", 
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: dryRateByPeriod["6h"] > 0 ? "#34c759" : "#ff453a",
+            }}>
+              6h: {dryRateByPeriod["6h"] > 0 ? "+" : "−"}{Math.abs(dryRateByPeriod["6h"])}
+            </div>
+            <div style={{ 
+              padding: "4px 6px", 
+              borderRadius: "4px", 
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: dryRateByPeriod["12h"] > 0 ? "#34c759" : "#ff453a",
+            }}>
+              12h: {dryRateByPeriod["12h"] > 0 ? "+" : "−"}{Math.abs(dryRateByPeriod["12h"])}
+            </div>
+            <div style={{ 
+              padding: "4px 6px", 
+              borderRadius: "4px", 
+              background: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: dryRateByPeriod["24h"] > 0 ? "#34c759" : "#ff453a",
+            }}>
+              24h: {dryRateByPeriod["24h"] > 0 ? "+" : "−"}{Math.abs(dryRateByPeriod["24h"])}
+            </div>
           </div>
         </div>
 

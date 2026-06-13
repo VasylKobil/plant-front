@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
 import "./App.css";
 
@@ -25,6 +25,8 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(null);
+
+  const hasInitialized = useRef(false);
 
   const metrics = useMemo(
     () => (latest ? getDashboardMetrics(latest, history) : null),
@@ -77,7 +79,8 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    if (mounted) {
+    if (!hasInitialized.current && mounted) {
+      hasInitialized.current = true;
       fetchData();
     }
 

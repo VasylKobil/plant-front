@@ -60,30 +60,38 @@ export function getWakeSuccessRate(latest, history) {
     };
   }
 
-  const first = new Date(history[history.length - 1].created_at);
+  // Calculate expected readings based on actual sleep intervals from history
+  let expectedCount = 1; // Start with the most recent reading
 
-  const last = new Date(history[0].created_at);
+  for (let i = 0; i < history.length - 1; i++) {
+    const current = new Date(history[i].created_at);
+    const next = new Date(history[i + 1].created_at);
+    const elapsedMinutes = (current - next) / 60000;
 
-  const elapsedMinutes = (last - first) / 60000;
+    // Use the sleep interval from the next (older) reading
+    const sleepMinutes = history[i + 1].sleep_minutes;
 
-  const expected = Math.max(
-    1,
+    // Calculate expected readings in this gap
+    const expectedInGap = Math.max(
+      1,
+      Math.round(elapsedMinutes / sleepMinutes)
+    );
 
-    Math.round(elapsedMinutes / latest.sleep_minutes) + 1
-  );
+    expectedCount += expectedInGap;
+  }
 
   const received = history.length;
 
   const missing = Math.max(
     0,
 
-    expected - received
+    expectedCount - received
   );
 
-  const percent = Math.round((received / expected) * 100);
+  const percent = Math.round((received / expectedCount) * 100);
 
   return {
-    expected,
+    expected: expectedCount,
 
     received,
 

@@ -37,7 +37,23 @@ export default function HistoryTable({ history }) {
               <span className="temp">{item.temperature}°C</span>
 
               <span className="moisture">
-                {moistureStatus.emoji} {moistureStatus.label}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                  {moistureStatus.emoji}
+                  <div style={{ 
+                  fontSize: "0.7rem", 
+                  display: "inline-block",
+                  padding: "3px 8px",
+                  borderRadius: "14px",
+                  background: "rgba(52, 199, 89, 0.1)",
+                  border: "1px solid rgba(52, 199, 89, 0.4)",
+                  color: "#34c759",
+                  fontWeight: "500",
+                  letterSpacing: "0.5px",
+                }}>
+                  {item.soil_raw}
+                </div>
+                </div>
+                
               </span>
 
               <span className={`battery ${batteryColor}`}>
