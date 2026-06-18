@@ -78,7 +78,7 @@ export function getMoistureDryingSpeed(history) {
 
   const newest = history[0];
 
-  const delta = newest.soil_raw - oldest.soil_raw;
+  const delta = oldest.soil_raw - newest.soil_raw;
 
   const hours =
     (new Date(newest.created_at) - new Date(oldest.created_at)) / 3600000;
@@ -126,13 +126,7 @@ export function getMoistureDryingSpeedByPeriod(history) {
 
     if (bestIdx !== 0) {
       const delta = history[0].soil_raw - history[bestIdx].soil_raw;
-      const elapsedHours = (newest - new Date(history[bestIdx].created_at)) / 3600000;
-      
-      if (elapsedHours > 0) {
-        results[label] = Number(((delta / elapsedHours) * 24).toFixed(0));
-      } else {
-        results[label] = 0;
-      }
+      results[label] = delta;
     } else {
       results[label] = 0;
     }

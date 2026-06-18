@@ -1,6 +1,8 @@
-import { getMoistureDryingSpeedByPeriod } from "../utils/soil";
+import { getMoistureDryingSpeedByPeriod, soilPercent } from "../utils/soil";
 
 import { getTemperatureRange } from "../utils/environment";
+
+import { SOIL } from "../utils/constants";
 
 export default function PlantBlock({ metrics, latest, history }) {
   if (!metrics || !latest) {
@@ -12,6 +14,10 @@ export default function PlantBlock({ metrics, latest, history }) {
   const dryRateByPeriod = getMoistureDryingSpeedByPeriod(history);
 
   const tempRange = getTemperatureRange(history);
+
+  // Calculate optimal range percentages (inverted scale: dry=0%, wet=100%)
+  const optimalLowPercent = soilPercent(SOIL.optimalLow);
+  const optimalHighPercent = soilPercent(SOIL.optimalHigh);
 
   const moistureStatus = {
     emoji: moisture.emoji,
@@ -58,6 +64,17 @@ export default function PlantBlock({ metrics, latest, history }) {
       <div className="moisture-bar-full">
         <div className="bar-label">
           {moistureStatus.emoji} {moistureStatus.label}
+        </div>
+
+        {/* Optimal zone background - positioned above bar */}
+        <div
+          className="optimal-zone-bg"
+          style={{
+            left: `${100 - optimalLowPercent}%`,
+            width: `${optimalLowPercent - optimalHighPercent}%`,
+          }}
+        >
+          <span className="optimal-zone-label">Optimal</span>
         </div>
 
         <div className="bar-container">
