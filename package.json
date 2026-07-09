@@ -1,6 +1,6 @@
 {
   "name": "plant-front",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "homepage": "https://vasylkobil.github.io/plant-front",
   "dependencies": {

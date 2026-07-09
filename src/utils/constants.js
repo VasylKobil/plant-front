@@ -7,7 +7,7 @@ export const SOIL = {
 };
 
 export const BATTERY = {
-  full: 4.2,
+  full: 4.06,
   critical: 3.4,
   low: 3.7,
   cutoff: 3.4,
